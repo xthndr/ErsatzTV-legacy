@@ -68,6 +68,59 @@ public class RefreshChannelDataHandler : IRequestHandler<RefreshChannelData>
                 return;
             }
 
+            // Check for per-channel EPG override - write dummy 2-hour programme blocks
+            Option<Channel> maybeEpgOverride = await dbContext.Channels
+                .AsNoTracking()
+                .SelectOneAsync(
+                    c => c.Number,
+                    c => c.Number == request.ChannelNumber && c.EpgOverrideEnabled,
+                    cancellationToken);
+
+            foreach (Channel epgOverrideChannel in maybeEpgOverride)
+            {
+                if (!string.IsNullOrWhiteSpace(epgOverrideChannel.EpgOverrideTitle))
+                {
+                    int overrideDays = await _configElementRepository
+                        .GetValue<int>(ConfigElementKey.XmltvDaysToBuild, cancellationToken)
+                        .IfNoneAsync(2);
+
+                    await using RecyclableMemoryStream overrideMs = _recyclableMemoryStreamManager.GetStream();
+                    await using XmlWriter overrideXml = XmlWriter.Create(
+                        overrideMs,
+                        new XmlWriterSettings { Async = true, ConformanceLevel = ConformanceLevel.Fragment });
+
+                    string channelId = ChannelIdentifier.FromNumber(request.ChannelNumber);
+                    string safeTitle = System.Security.SecurityElement.Escape(epgOverrideChannel.EpgOverrideTitle);
+                    DateTimeOffset overrideFinish = DateTimeOffset.UtcNow.AddDays(overrideDays);
+                    DateTimeOffset now = DateTimeOffset.UtcNow;
+
+                    // Align to the most recent even 2-hour boundary in UTC
+                    DateTimeOffset current = new DateTimeOffset(
+                        now.Year, now.Month, now.Day,
+                        (now.Hour / 2) * 2, 0, 0, TimeSpan.Zero);
+
+                    while (current < overrideFinish)
+                    {
+                        DateTimeOffset next = current.AddHours(2);
+                        string progStart = current.ToString("yyyyMMddHHmmss zzz", CultureInfo.InvariantCulture).Replace(":", string.Empty);
+                        string progStop  = next.ToString("yyyyMMddHHmmss zzz", CultureInfo.InvariantCulture).Replace(":", string.Empty);
+
+                        await overrideXml.WriteRawAsync(
+                            $"<programme start=\"{progStart}\" stop=\"{progStop}\" channel=\"{channelId}\">" +
+                            $"<title lang=\"en\">{safeTitle}</title>" +
+                            "</programme>");
+
+                        current = next;
+                    }
+
+                    await overrideXml.FlushAsync();
+                    string overrideTempFile = Path.GetTempFileName();
+                    await File.WriteAllBytesAsync(overrideTempFile, overrideMs.ToArray(), cancellationToken);
+                    File.Move(overrideTempFile, targetFile, true);
+                    return;
+                }
+            }
+
             string movieTemplateFileName = GetMovieTemplateFileName();
             string episodeTemplateFileName = GetEpisodeTemplateFileName();
             string musicVideoTemplateFileName = GetMusicVideoTemplateFileName();

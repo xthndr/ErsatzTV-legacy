@@ -45,5 +45,7 @@ public class Channel
     public ChannelIdleBehavior IdleBehavior { get; set; }
     public bool IsEnabled { get; set; }
     public bool ShowInEpg { get; set; }
+    public bool EpgOverrideEnabled { get; set; }
+    public string EpgOverrideTitle { get; set; }
     public string WebEncodedName => WebUtility.UrlEncode(Name);
 }

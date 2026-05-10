@@ -1,4 +1,4 @@
-﻿@page "/channels/{Id:int?}"
+@page "/channels/{Id:int?}"
 @page "/channels/add"
 @using System.Globalization
 @using ErsatzTV.Application.Artworks
@@ -131,6 +131,21 @@ else
     </div>
     <MudCheckBox @bind-Value="_model.ShowInEpg" For="@(() => _model.ShowInEpg)" Dense="true"/>
 </MudStack>
+<MudStack Row="true" Breakpoint="Breakpoint.SmAndDown" Class="form-field-stack gap-md-8 mb-5">
+    <div class="d-flex">
+        <MudText>EPG Override</MudText>
+    </div>
+    <MudCheckBox @bind-Value="_model.EpgOverrideEnabled" For="@(() => _model.EpgOverrideEnabled)" Dense="true" Label="Generate dummy 2-hour EPG blocks"/>
+</MudStack>
+@if (_model.EpgOverrideEnabled)
+{
+    <MudStack Row="true" Breakpoint="Breakpoint.SmAndDown" Class="form-field-stack gap-md-8 mb-5">
+        <div class="d-flex">
+            <MudText>EPG Override Title</MudText>
+        </div>
+        <MudTextField @bind-Value="_model.EpgOverrideTitle" For="@(() => _model.EpgOverrideTitle)" HelperText="This title repeats as 2-hour blocks in the guide"/>
+    </MudStack>
+}
 <MudStack Row="true" Breakpoint="Breakpoint.SmAndDown" Class="form-field-stack gap-md-8 mb-5">
     <div class="d-flex">
         <MudText>Streaming Engine</MudText>
@@ -451,6 +466,8 @@ else
                         _model.IdleBehavior = channelViewModel.IdleBehavior;
                         _model.IsEnabled = channelViewModel.IsEnabled;
                         _model.ShowInEpg = channelViewModel.ShowInEpg;
+                        _model.EpgOverrideEnabled = channelViewModel.EpgOverrideEnabled;
+                        _model.EpgOverrideTitle = channelViewModel.EpgOverrideTitle;
                     },
                     () => NavigationManager.NavigateTo("404"));
             }

@@ -1,4 +1,4 @@
-﻿using ErsatzTV.Application.Artworks;
+using ErsatzTV.Application.Artworks;
 using ErsatzTV.Application.Channels;
 using ErsatzTV.Core.Domain;
 
@@ -65,6 +65,8 @@ public class ChannelEditViewModel
     public ChannelIdleBehavior IdleBehavior { get; set; }
     public bool IsEnabled { get; set; }
     public bool ShowInEpg { get; set; }
+    public bool EpgOverrideEnabled { get; set; }
+    public string EpgOverrideTitle { get; set; }
 
     public UpdateChannel ToUpdate() =>
         new(
@@ -99,7 +101,9 @@ public class ChannelEditViewModel
             TranscodeMode,
             IdleBehavior,
             IsEnabled,
-            ShowInEpg);
+            ShowInEpg,
+            EpgOverrideEnabled,
+            EpgOverrideTitle);
 
     public CreateChannel ToCreate() =>
         new(
@@ -133,5 +137,7 @@ public class ChannelEditViewModel
             TranscodeMode,
             IdleBehavior,
             IsEnabled,
-            ShowInEpg);
+            ShowInEpg,
+            EpgOverrideEnabled,
+            EpgOverrideTitle);
 }

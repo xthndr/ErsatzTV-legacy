@@ -1,4 +1,4 @@
-﻿using ErsatzTV.Application.Artworks;
+using ErsatzTV.Application.Artworks;
 using ErsatzTV.Core.Api.Channels;
 using ErsatzTV.Core.Domain;
 
@@ -38,7 +38,9 @@ internal static class Mapper
             channel.TranscodeMode,
             channel.IdleBehavior,
             channel.IsEnabled,
-            channel.ShowInEpg);
+            channel.ShowInEpg,
+            channel.EpgOverrideEnabled,
+            channel.EpgOverrideTitle);
 
     internal static ChannelResponseModel ProjectToResponseModel(Channel channel) =>
         new(

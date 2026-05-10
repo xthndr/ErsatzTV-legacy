@@ -1,4 +1,4 @@
-﻿using ErsatzTV.Application.Artworks;
+using ErsatzTV.Application.Artworks;
 using ErsatzTV.Core;
 using ErsatzTV.Core.Domain;
 
@@ -34,4 +34,6 @@ public record UpdateChannel(
     ChannelTranscodeMode TranscodeMode,
     ChannelIdleBehavior IdleBehavior,
     bool IsEnabled,
-    bool ShowInEpg) : IRequest<Either<BaseError, ChannelViewModel>>;
+    bool ShowInEpg,
+    bool EpgOverrideEnabled,
+    string EpgOverrideTitle) : IRequest<Either<BaseError, ChannelViewModel>>;

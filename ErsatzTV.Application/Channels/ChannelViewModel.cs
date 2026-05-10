@@ -35,7 +35,9 @@ public record ChannelViewModel(
     ChannelTranscodeMode TranscodeMode,
     ChannelIdleBehavior IdleBehavior,
     bool IsEnabled,
-    bool ShowInEpg)
+    bool ShowInEpg,
+    bool EpgOverrideEnabled,
+    string EpgOverrideTitle)
 {
     public string WebEncodedName => WebUtility.UrlEncode(Name);
 }
