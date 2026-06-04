@@ -34,6 +34,7 @@ COPY ErsatzTV.Infrastructure/*.csproj ./ErsatzTV.Infrastructure/
 COPY ErsatzTV.Infrastructure.Sqlite/*.csproj ./ErsatzTV.Infrastructure.Sqlite/
 COPY ErsatzTV.Infrastructure.MySql/*.csproj ./ErsatzTV.Infrastructure.MySql/
 COPY ErsatzTV.Scanner/*.csproj ./ErsatzTV.Scanner/
+ENV DOTNET_NUGET_SIGNATURE_VERIFICATION=false
 RUN dotnet restore -r linux-x64 ErsatzTV/
 
 # copy everything else and build app

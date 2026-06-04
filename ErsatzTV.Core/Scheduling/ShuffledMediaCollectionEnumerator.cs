@@ -76,7 +76,7 @@ public class ShuffledMediaCollectionEnumerator : IMediaCollectionEnumerator
             // Protection scales with collection size: ~20% lookback, capped at 20, minimum 3.
             // Examples: 20 items = 4, 50 items = 10, 100 items = 20, 200+ items = 20.
             int lookback = Math.Max(3, Math.Min(20, _shuffled.Count / 5));
-            var recentIds = new HashSet<int>();
+            var recentIds = new System.Collections.Generic.HashSet<int>();
             for (int t = Math.Max(0, _shuffled.Count - lookback); t < _shuffled.Count; t++)
             {
                 recentIds.Add(_shuffled[t].Id);
